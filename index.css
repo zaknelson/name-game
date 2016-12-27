@@ -1,0 +1,19 @@
+h1 {
+  font-family: 'Droid Sans', sans-serif;
+}
+
+.neither-button {
+  position: absolute;
+right: 50%;
+bottom: 10px;
+margin: 
+}
+
+.big-name {
+  font-size: 15vw;
+}
+
+.mdl-grid.center-items {
+  justify-content: center;
+  text-align: center;
+}
