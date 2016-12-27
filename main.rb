@@ -2,6 +2,10 @@ require 'sinatra'
 require 'elo'
 require 'json'
 
+Elo.configure do |config|
+  config.default_k_factor = 30
+  config.use_FIDE_settings = false
+end
   
 players = Hash.new
 
