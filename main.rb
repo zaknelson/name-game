@@ -7,5 +7,5 @@ require 'elo'
   end
 
   get '/test' do
-    @player.rating
+    player.rating
   end
