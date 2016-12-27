@@ -22,15 +22,34 @@ get '/names' do
   result = []
   sorted_players.sort! do |x, y| 
     if x[:elo_player].rating == y[:elo_player].rating
-      x[:elo_player].rating <=> y[:elo_player].rating 
-    else
       x[:name] <=> y[:name]
+    else
+     y[:elo_player].rating <=> x[:elo_player].rating  
     end
   end
   sorted_players.each do |player|
     result.push({:name => player[:name], :rating => player[:elo_player].rating})
   end
   result.to_json
+end
+
+get '/names/random' do
+  rand = Random.new
+  first = rand.rand(players.size)
+  second = first
+  while (second == first) do
+    second = rand.rand(players.size)
+  end
+  result = []
+  result.push(players.keys[first])
+  result.push(players.keys[second])
+  result.to_json
+end
+
+post '/games' do
+  values = JSON.parse(request.env['rack.input'].read)
+  players[values['winner']][:elo_player].wins_from(players[values['loser']][:elo_player])
+  200
 end
 
 get '/' do
