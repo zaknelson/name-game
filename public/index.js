@@ -1,3 +1,40 @@
+function chooseName(names, i) {
+  return function() {
+    if (getSelectionText() !== "") {
+      return;
+    }
+    var loserIndex = (i == 0) ? 1 : 0;
+    postJSON({
+      winners: [names[i].innerText],
+      losers: [names[loserIndex].innerText]
+    }, "/games", function() {
+      getNewRandomNames(names);
+    }, function() {
+      getNewRandomNames(names);
+    });
+  };
+}
+
+function getNewRandomNames(names) {
+  loadJSON("/names/random", function(json) {
+    for (var i = 0; i < names.length; i++) {
+      names[i].innerText = json[i];
+    }
+  }, function() {
+    console.log("Error");
+  });
+}
+
+function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text;
+    }
+    return text;
+}
+
 function loadJSON(path, success, error) {
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -44,30 +81,6 @@ function postJSON(data, path, success, error) {
   xhr.send(JSON.stringify(data));
 }
 
-function chooseName(names, i) {
-  return function() {
-    var loserIndex = (i == 0) ? 1 : 0;
-    postJSON({
-      winners: [names[i].innerText],
-      losers: [names[loserIndex].innerText]
-    }, "/games", function() {
-      getNewRandomNames(names);
-    }, function() {
-      getNewRandomNames(names);
-    });
-  };
-}
-
-function getNewRandomNames(names) {
-  loadJSON("/names/random", function(json) {
-    for (var i = 0; i < names.length; i++) {
-      names[i].innerText = json[i];
-    }
-  }, function() {
-    console.log("Error");
-  });
-}
-
 function main() {
   var names = document.querySelectorAll(".big-name");
   var thumbsUp = document.querySelectorAll(".thumbs-up");
@@ -79,7 +92,6 @@ function main() {
   }
 
   neither.onclick = function() {
-
     postJSON({
       winners: [],
       losers: [names[0].innerText, names[1].innerText]
