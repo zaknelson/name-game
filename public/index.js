@@ -48,13 +48,13 @@ function chooseName(names, i) {
   return function() {
     var loserIndex = (i == 0) ? 1 : 0;
     postJSON({
-      winner: names[i].innerText,
-      loser: names[loserIndex].innerText
+      winners: [names[i].innerText],
+      losers: [names[loserIndex].innerText]
     }, "/games", function() {
       getNewRandomNames(names);
     }, function() {
       getNewRandomNames(names);
-    })
+    });
   };
 }
 
@@ -71,10 +71,23 @@ function getNewRandomNames(names) {
 function main() {
   var names = document.querySelectorAll(".big-name");
   var thumbsUp = document.querySelectorAll(".thumbs-up");
+  var neither = document.querySelector(".neither");
   getNewRandomNames(names);
   for (var i = 0; i < names.length; i++) {
     names[i].onclick = chooseName(names, i);
     thumbsUp[i].onclick = chooseName(names, i);
+  }
+
+  neither.onclick = function() {
+
+    postJSON({
+      winners: [],
+      losers: [names[0].innerText, names[1].innerText]
+    }, "/games", function() {
+      getNewRandomNames(names);
+    }, function() {
+      getNewRandomNames(names);
+    });
   }
 }
 

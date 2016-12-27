@@ -1,18 +1,13 @@
 require 'sinatra'
-require 'elo'
+require 'elo_rating'
 require 'json'
-
-Elo.configure do |config|
-  config.default_k_factor = 30
-  config.use_FIDE_settings = false
-end
   
 players = Hash.new
 
 File.open(File.join(settings.public_folder, 'names.csv'), "r") do |f|
   f.each_line do |line|
     values = line.split(",")
-    players[values[0]] = {:name => values[0], :elo_player => Elo::Player.new(:rating => values[1].to_i) };
+    players[values[0]] = {:name => values[0], :rating => values[1].to_i };
   end
 end 
 
@@ -25,16 +20,13 @@ get '/names' do
   sorted_players = players.values;
   result = []
   sorted_players.sort! do |x, y| 
-    if x[:elo_player].rating == y[:elo_player].rating
+    if x[:rating] == y[:rating]
       x[:name] <=> y[:name]
     else
-     y[:elo_player].rating <=> x[:elo_player].rating  
+     y[:rating] <=> x[:rating]  
     end
   end
-  sorted_players.each do |player|
-    result.push({:name => player[:name], :rating => player[:elo_player].rating})
-  end
-  result.to_json
+  sorted_players.to_json
 end
 
 get '/names/random' do
@@ -52,7 +44,34 @@ end
 
 post '/games' do
   values = JSON.parse(request.env['rack.input'].read)
-  players[values['winner']][:elo_player].wins_from(players[values['loser']][:elo_player])
+  winners = values['winners']
+  losers = values['losers']
+
+  # Get current ratings
+  match = EloRating::Match.new
+  if (winners.size == 0)
+    match.add_player(rating: 1500, winner: true)
+  else
+    winners.each do |winner|
+      match.add_player(rating: players[winner][:rating], winner: true)
+    end
+  end
+  losers.each do |loser|
+    match.add_player(rating: players[loser][:rating])
+  end
+
+  # Update ratings
+  new_ratings = match.updated_ratings
+  if (winners.size == 0)
+    new_ratings.shift
+  end
+  winners.each do |winner|
+    players[winner][:rating] = new_ratings.shift
+  end
+  losers.each do |loser|
+    players[loser][:rating] = new_ratings.shift
+  end
+
   200
 end
 

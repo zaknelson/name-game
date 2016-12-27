@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    elo (0.1.0)
+    elo_rating (1.0.0)
     rack (1.6.5)
     rack-protection (1.5.3)
       rack
@@ -15,7 +15,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  elo
+  elo_rating
   sinatra
 
 BUNDLED WITH
