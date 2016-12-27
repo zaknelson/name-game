@@ -13,5 +13,5 @@ get '/test' do
 end
 
 get '/test2' do
-  player.rating
+  player.rating.to_s
 end
