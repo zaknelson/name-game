@@ -70,9 +70,11 @@ function getNewRandomNames(names) {
 
 function main() {
   var names = document.querySelectorAll(".big-name");
+  var thumbsUp = document.querySelectorAll(".thumbs-up");
   getNewRandomNames(names);
   for (var i = 0; i < names.length; i++) {
     names[i].onclick = chooseName(names, i);
+    thumbsUp[i].onclick = chooseName(names, i);
   }
 }
 
