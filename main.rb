@@ -50,7 +50,7 @@ post '/games' do
   # Get current ratings
   match = EloRating::Match.new
   if (winners.size == 0)
-    match.add_player(rating: 1500, winner: true)
+    match.add_player(rating: 1000, winner: true)
   else
     winners.each do |winner|
       match.add_player(rating: players[winner][:rating], winner: true)
