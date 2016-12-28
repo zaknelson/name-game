@@ -4,15 +4,35 @@ require 'json'
   
 set :protection, :except => [:json_csrf]
 
-  
+
 players = Hash.new
+$rand = Random.new
+$current_round = []
+$next_round = []
 
 File.open(File.join(settings.public_folder, 'names.csv'), "r") do |f|
   f.each_line do |line|
     values = line.split(",")
     players[values[0]] = {:name => values[0], :rating => values[1].to_i };
+    $current_round.push(players[values[0]])
   end
-end 
+end
+
+def get_random_player
+  i = $rand.rand($current_round.size)
+  player = $current_round[i]
+  $next_round.push(player)
+  $current_round.delete_at(i)
+  if ($current_round.size == 0)
+    $next_round.each do |p|
+      if (p[:rating] > 1450)
+        $current_round.push(p)
+      end
+    end
+    $next_round = []
+  end
+  player
+end
 
 get '/' do
   send_file File.join(settings.public_folder, 'index.html')
@@ -33,15 +53,11 @@ get '/names' do
 end
 
 get '/names/random' do
-  rand = Random.new
-  first = rand.rand(players.size)
-  second = first
-  while (second == first) do
-    second = rand.rand(players.size)
-  end
+  first = get_random_player()
+  second = get_random_player()
   result = []
-  result.push(players.keys[first])
-  result.push(players.keys[second])
+  result.push(first[:name])
+  result.push(second[:name])
   result.to_json
 end
 
