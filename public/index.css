@@ -11,6 +11,7 @@ margin:
 
 .big-name {
   font-size: 15vw;
+  cursor: pointer;
 }
 
 .mdl-grid.center-items {

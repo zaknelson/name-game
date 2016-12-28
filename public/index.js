@@ -101,6 +101,10 @@ function main() {
       getNewRandomNames(names);
     });
   }
+
+  document.ontouchmove = function(event){
+    event.preventDefault();
+}
 }
 
 document.addEventListener("DOMContentLoaded", function(event) { 

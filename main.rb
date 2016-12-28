@@ -13,8 +13,10 @@ $next_round = []
 File.open(File.join(settings.public_folder, 'names.csv'), "r") do |f|
   f.each_line do |line|
     values = line.split(",")
-    players[values[0]] = {:name => values[0], :rating => values[1].to_i };
-    $current_round.push(players[values[0]])
+    if (values[1].to_i > 1450)
+      players[values[0]] = {:name => values[0], :rating => values[1].to_i };
+      $current_round.push(players[values[0]])
+    end
   end
 end
 
