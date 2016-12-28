@@ -2,6 +2,9 @@ require 'sinatra'
 require 'elo_rating'
 require 'json'
   
+set :protection, :except => [:json_csrf]
+
+  
 players = Hash.new
 
 File.open(File.join(settings.public_folder, 'names.csv'), "r") do |f|
