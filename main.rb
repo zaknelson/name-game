@@ -43,7 +43,6 @@ end
 get '/names' do
   content_type :json 
   sorted_players = players.values;
-  result = []
   sorted_players.sort! do |x, y| 
     if x[:rating] == y[:rating]
       x[:name] <=> y[:name]
@@ -51,7 +50,11 @@ get '/names' do
      y[:rating] <=> x[:rating]  
     end
   end
-  sorted_players.to_json
+  s = ""
+    sorted_players.each do |player|
+      s += player[:name] + "," + player[:rating].to_s + "\n"
+    end
+  s
 end
 
 get '/names/random' do
@@ -92,6 +95,18 @@ post '/games' do
   losers.each do |loser|
     players[loser][:rating] = new_ratings.shift
   end
+
+  sorted_players = players.values;
+  sorted_players.sort! do |x, y| 
+    x[:name] <=> y[:name]
+  end
+
+  File.open(File.join(settings.public_folder, 'names.csv'), "w") do |f|
+    sorted_players.each do |player|
+      f.write(player[:name] + "," + player[:rating].to_s + "\n")
+    end
+  end
+    
 
   200
 end
